@@ -1,0 +1,17 @@
+{
+  "name": "tire-pressure-calculator",
+  "version": "1.0.0",
+  "description": "Bike tyre pressure calculator. Front and rear psi from rider weight, measured tyre width, surface and setup. Road, gravel, MTB and e-bike.",
+  "type": "module",
+  "files": ["js", "css", "index.html", "docs"],
+  "scripts": {
+    "test": "node --test test/",
+    "start": "python3 -m http.server 8000"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VishalSharmavj/tire-pressure-calculator.git"
+  },
+  "homepage": "https://bikeshala.com/tools/tire-pressure-calculator/"
+}

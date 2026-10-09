@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tyre Pressure Calculator</title>
+<meta name="description" content="Open-source bike tyre pressure calculator. Front and rear psi from rider weight, measured tyre width, surface and setup.">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/calculator.css">
+</head>
+<body>
+<main class="wrap">
+
+	<header class="intro">
+		<h1>Tyre Pressure Calculator</h1>
+		<p>Front and rear pressure from your weight, your measured tyre width and
+		what you are riding on. Road, gravel, mountain bike, fat and e-bike.</p>
+	</header>
+
+	<form class="panel" id="form" autocomplete="off">
+		<section class="group">
+			<h2>Weight</h2>
+			<div class="row">
+				<label class="field"><span>Rider <small>kg</small></span>
+					<input type="number" id="rider" value="75" min="20" max="200" step="0.5"></label>
+				<label class="field"><span>Bike <small>kg</small></span>
+					<input type="number" id="bike" value="9" min="2" max="60" step="0.1"></label>
+				<label class="field"><span>Kit and luggage <small>kg</small></span>
+					<input type="number" id="gear" value="1" min="0" max="60" step="0.5"></label>
+				<label class="field"><span>Weight on the front <small>%</small></span>
+					<input type="number" id="split" value="45" min="30" max="60" step="1"></label>
+			</div>
+		</section>
+
+		<section class="group">
+			<h2>Tyres</h2>
+			<div class="row">
+				<label class="field"><span>Front width <small>mm, measured</small></span>
+					<input type="number" id="wf" value="28" min="15" max="140" step="0.5"></label>
+				<label class="field"><span>Rear width <small>mm, measured</small></span>
+					<input type="number" id="wr" value="28" min="15" max="140" step="0.5"></label>
+				<label class="field"><span>Rim diameter</span>
+					<select id="iso">
+						<option value="622" selected>700c / 29in (622)</option>
+						<option value="584">650b / 27.5in (584)</option>
+						<option value="559">26in (559)</option>
+						<option value="406">20in (406)</option>
+					</select></label>
+			</div>
+			<p class="note">Measure the tyre on your own rim with calipers. A 25 mm
+			tyre on a wide modern rim measures 28 mm — which is 13 psi of difference.</p>
+		</section>
+
+		<section class="group">
+			<h2>Riding</h2>
+			<div class="row">
+				<label class="field"><span>Surface</span>
+					<select id="surface">
+						<optgroup label="Road">
+							<option value="velodrome">Velodrome</option>
+							<option value="newTarmac">New tarmac</option>
+							<option value="tarmac" selected>Normal tarmac</option>
+							<option value="poorTarmac">Poor tarmac</option>
+							<option value="cobbles">Cobbles</option>
+						</optgroup>
+						<optgroup label="Gravel">
+							<option value="hardpack">Hardpack</option>
+							<option value="smoothGravel">Smooth gravel</option>
+							<option value="looseGravel">Loose gravel</option>
+						</optgroup>
+						<optgroup label="Off road">
+							<option value="singletrack">Singletrack</option>
+							<option value="rockGardens">Rock gardens</option>
+							<option value="soft">Sand, snow or mud</option>
+						</optgroup>
+					</select></label>
+				<label class="field"><span>How you ride</span>
+					<select id="style">
+						<option value="steady">Steady</option>
+						<option value="normal" selected>Normal</option>
+						<option value="fast">Fast</option>
+						<option value="race">Racing, hitting things hard</option>
+					</select></label>
+				<label class="field"><span>Setup</span>
+					<select id="setup">
+						<option value="tubeless" selected>Tubeless</option>
+						<option value="insert">Tubeless with insert</option>
+						<option value="tube">Inner tube</option>
+						<option value="latex">Latex tube</option>
+						<option value="tubular">Tubular</option>
+					</select></label>
+				<label class="field"><span>Casing</span>
+					<select id="casing">
+						<option value="supple">Supple / race</option>
+						<option value="standard" selected>Standard</option>
+						<option value="reinforced">Reinforced</option>
+						<option value="dh">Downhill</option>
+					</select></label>
+			</div>
+			<div class="row" style="margin-top:1rem">
+				<label class="field check"><span>&nbsp;</span>
+					<span><input type="checkbox" id="ebike"> E-bike</span></label>
+				<label class="field check"><span>&nbsp;</span>
+					<span><input type="checkbox" id="hookless"> Hookless rims</span></label>
+				<label class="field"><span>Max on sidewall <small>psi, optional</small></span>
+					<input type="number" id="maxpsi" min="0" max="200" step="1" placeholder="none"></label>
+				<label class="field"><span>Units</span>
+					<select id="unit"><option value="psi" selected>psi</option><option value="bar">bar</option></select></label>
+			</div>
+		</section>
+	</form>
+
+	<section class="results" aria-live="polite">
+		<ul class="problems" id="problems" hidden></ul>
+
+		<div class="cards two">
+			<article class="card" id="card-front">
+				<h3>Front</h3>
+				<p class="length"><output id="psi-front">—</output><span id="u-front">psi</span></p>
+				<p class="order" id="alt-front"></p>
+				<ul class="meta" id="meta-front"></ul>
+			</article>
+			<article class="card" id="card-rear">
+				<h3>Rear</h3>
+				<p class="length"><output id="psi-rear">—</output><span id="u-rear">psi</span></p>
+				<p class="order" id="alt-rear"></p>
+				<ul class="meta" id="meta-rear"></ul>
+			</article>
+		</div>
+
+		<dl class="stats">
+			<div><dt>Total weight</dt><dd id="stat-total">—</dd></div>
+			<div><dt>On the front</dt><dd id="stat-lf">—</dd></div>
+			<div><dt>On the rear</dt><dd id="stat-lr">—</dd></div>
+			<div><dt>Front tyre drop</dt><dd id="stat-drop">—</dd></div>
+		</dl>
+
+		<p class="note">Front and rear differ because the weight on them does.
+		Running both tyres at the same pressure makes one of them wrong.</p>
+
+		<ul class="warnings" id="warnings" hidden></ul>
+	</section>
+
+	<footer class="foot">
+		<p><strong>This is a simplified build.</strong> It covers the pressure
+		model, both wheels and the hookless limit. For temperature compensation,
+		a drawing of how far your tyre squashes, bike presets and a helper that
+		works out measured width from your rim, use the full version:</p>
+		<p class="cta"><a href="https://bikeshala.com/tools/tire-pressure-calculator/">Tyre Pressure Calculator on Bikeshala →</a></p>
+		<p class="src">Source: <a href="https://github.com/VishalSharmavj/tire-pressure-calculator">github.com/VishalSharmavj/tire-pressure-calculator</a> · MIT</p>
+	</footer>
+
+</main>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
